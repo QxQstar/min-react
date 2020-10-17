@@ -1,26 +1,28 @@
 import { RENDER_TO_DOM } from './constants'
+import { IBaseObject, ReactComponent, InnerComponent, TextNode, ElementNode } from './types'
+import { isPlainObject, isTextNode, isElementNode } from './helper/utils'
+import BaseComponent from './baseComponent'
 
-export default class Component {
+export default abstract class CustomNode extends BaseComponent{
+    state: IBaseObject;
     constructor() {
-        this._range = null;
+        super();
         this.state = null;
-        // 旧的 vdom
-        this._vdom = null;
-        this.props = Object.create(null)
-        this.children = []
     }
-    get vdom() {
+    abstract render() : ReactComponent
+
+    get vdom(): InnerComponent {
         return this.render().vdom
     }
-    setState(newState) {
-        if(this.state === null || typeof this.state !== 'object') {
+    setState(newState: IBaseObject) {
+        if(!isPlainObject(this.state)) {
             this.state = newState;
-            this.rerender()
+            this.update()
             return ;
         }
-        const merge = (oldState, newState) => {
+        const merge = (oldState: IBaseObject, newState: IBaseObject) => {
             for (const key in newState) {
-                if(oldState[key] !== null && typeof oldState[key] === 'object') {
+                if(isPlainObject(oldState[key])) {
                     merge(oldState[key], newState[key])
                 } else {
                     oldState[key] = newState[key]
@@ -32,36 +34,40 @@ export default class Component {
         this.update()
     }
     update() {
-        function isSameNode(oldNode, newNode) {
+        function isSameNode(oldNode: InnerComponent, newNode: InnerComponent) {
             if(oldNode.type !== newNode.type) {
                 return false
             }
 
-            if(newNode.type === '#text' && newNode.content !== oldNode.content) {
-                return false
-            }
-
-            for (const name in newNode.props) {
-                if(oldNode[name] !== newNode[name]) {
+            if(isTextNode(newNode)) {
+                if(newNode.content !== (oldNode as TextNode).content) {
+                    return false
+                }
+            } else {
+                for (const name in newNode.props) {
+                    if(oldNode[name] !== newNode[name]) {
+                        return false
+                    }
+                }
+                if (Object.keys(newNode.props).length < Object.keys((oldNode as ElementNode).props).length) {
                     return false
                 }
             }
-            if (Object.keys(newNode.props).length < Object.keys(oldNode.props).length) {
-                return false
-            }
-
             return true
         }
-        const update = (oldNode, newNode) => {
+        const update = (oldNode: InnerComponent, newNode: InnerComponent) => {
             if (!isSameNode(oldNode, newNode)) {
                 newNode[RENDER_TO_DOM](oldNode._range)
                 return;
             }
             newNode._range = oldNode._range
 
+            if(!isElementNode(newNode) || !isElementNode(oldNode)) {
+                return ;
+            }
+
             const newChildren = newNode.vChildren;
             const oldChildren = oldNode.vChildren;
-
             if(!newChildren || newChildren.length === 0) {
                 return 
             }
@@ -89,13 +95,7 @@ export default class Component {
         update(this._vdom,vdom);
         this._vdom = vdom;
     }
-    setAttribute(name,value) {
-        this.props[name] = value
-    }
-    appendChild(component) {
-        this.children.push(component)
-    }
-    [RENDER_TO_DOM](range) {
+    [RENDER_TO_DOM](range: Range) {
         this._range = range
         this._vdom = this.vdom;
         this._vdom[RENDER_TO_DOM](range)

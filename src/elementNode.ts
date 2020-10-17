@@ -1,16 +1,20 @@
-import Component from './component';
+import BaseComponent from './baseComponent'
 import { RENDER_TO_DOM } from './constants'
+import { InnerComponent } from './types'
 
-export default class ElementNodeWrapper extends Component{
-    constructor(tag) {
-        super(tag)
+export default class ElementNode extends BaseComponent {
+    type: string;
+    vChildren: InnerComponent[];
+    constructor(tag: string) {
+        super()
+        this.vChildren = null
         this.type = tag
     }
-    get vdom() {
+    get vdom(): ElementNode {
         this.vChildren = this.children.map(child => child.vdom);
         return this;
     }
-    [RENDER_TO_DOM](range) {
+    [RENDER_TO_DOM](range: Range){
         const root = document.createElement(this.type);
         range.deleteContents()
         // setAttribute
@@ -30,7 +34,7 @@ export default class ElementNodeWrapper extends Component{
 
         // appendChild
         if (!this.vChildren) {
-            this.children.map(child => child.vdom);
+            this.vChildren = this.children.map(child => child.vdom);
         }
         for (const child of this.vChildren) {
             const childRange = document.createRange()

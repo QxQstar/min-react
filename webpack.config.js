@@ -1,6 +1,6 @@
 module.exports = {
     entry: {
-        index: './src/index.js',
+        index: './src/example.tsx',
     },
     mode: 'development',
     optimization: {
@@ -8,19 +8,16 @@ module.exports = {
     },
     module: {
         rules: [{
-            test: /\.js$/,
+            test: /\.tsx?$/,
             exclude: /node_modules/,
-            use: {
-                loader: 'babel-loader',
-                options: {
-                    presets: ['@babel/preset-env'],
-                    plugins: [
-                        ["@babel/plugin-transform-react-jsx", {
-                            pragma: 'createElement'
-                        }]
-                    ],
+            use: [
+                {
+                    loader: 'ts-loader'
                 }
-            }
+            ]
         }]
+    },
+    resolve:{
+        extensions:['.ts','.tsx','.js']
     }
 }

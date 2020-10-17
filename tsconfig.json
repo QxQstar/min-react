@@ -1,0 +1,33 @@
+{
+    "compileOnSave": false,
+    "compilerOptions": {
+      "outDir": "./dist/",// 打包到的目录
+      "sourceMap": false,// 是否生成sourceMap（用于浏览器调试）
+      "noImplicitAny": false,
+      "noUnusedLocals": false,
+      "noUnusedParameters": false,
+      "declaration": true,// 是否生成声明文件
+      "declarationMap": false,// 是否生成声明文件map文件（便于调试）
+      "moduleResolution": "node",
+      "module": "esnext",
+      "target": "es5",// 转化成的目标语言
+      "baseUrl": "./",
+      "typeRoots": [
+        "./node_modules/@types"
+      ],
+      "lib": [
+        "dom",
+        "es2015"
+      ],
+      "jsxFactory": "createElement",
+      "jsx": "react",
+      "allowJs": false
+    },
+    "include": [
+      "src/**/*.ts", "src/**/*.tsx"
+    ],// 要打包的文件
+    "exclude": [
+      "node_modules",
+      "*.test.ts"
+    ]
+  }
