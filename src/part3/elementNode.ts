@@ -1,20 +1,33 @@
-import BaseComponent from './baseComponent'
-import { RENDER_TO_DOM } from './constants'
-import { InnerComponent } from './types'
+import { TextNode, Component } from './types';
+import { RENDER_TO_DOM } from './constants';
 
-export default class ElementNode extends BaseComponent {
-    type: string;
-    vChildren: InnerComponent[];
-    constructor(tag: string) {
-        super()
-        this.vChildren = null
-        this.type = tag
+export default class ElementNode {
+    _range: Range
+    children: (Component | ElementNode | TextNode)[]
+    vChildren?: (ElementNode | TextNode)[]
+    props: {[attr: string]: any}
+    type: string
+
+    constructor(type: string) {
+        this.type = type
+        this.children = []
+        this.props = Object.create(null)
+        this._range = null
     }
+
+    setAttribute(name: string,value: any) {
+        this.props[name] = value
+    }
+    appendChild(component: Component | ElementNode | TextNode) {
+        this.children.push(component)
+    }
+
     get vdom(): ElementNode {
         this.vChildren = this.children.map(child => child.vdom);
         return this;
     }
-    [RENDER_TO_DOM](range: Range){
+
+    [RENDER_TO_DOM](range: Range) {
         const root = document.createElement(this.type);
         range.deleteContents()
         // setAttribute

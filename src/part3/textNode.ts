@@ -1,4 +1,4 @@
-import { RENDER_TO_DOM } from './constants'
+import { RENDER_TO_DOM } from './constants';
 
 export default class TextNode {
     type: string;
