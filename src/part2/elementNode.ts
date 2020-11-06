@@ -1,4 +1,5 @@
 import { TextNode, Component } from './types';
+import { RENDER_TO_DOM } from './constants';
 
 export default class ElementNode {
     root: HTMLElement
@@ -21,6 +22,15 @@ export default class ElementNode {
     }
 
     appendChild(component: TextNode | ElementNode | Component) {
-        this.root.appendChild(component.root)
+        const range: Range = document.createRange()
+        // 因为是在节点的最后添加子元素，所以将 range 移动到末尾
+        range.setStart(this.root, this.root.childNodes.length)
+        range.setEnd(this.root,this.root.childNodes.length)
+        component[RENDER_TO_DOM](range)
+    }
+
+    [RENDER_TO_DOM](range: Range) {
+        range.deleteContents()
+        range.insertNode(this.root)
     }
 }

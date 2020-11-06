@@ -1,6 +1,7 @@
 module.exports = {
     entry: {
         part1: './src/part1/eg.tsx',
+        part2: './src/part2/eg.tsx'
     },
     mode: 'development',
     optimization: {
