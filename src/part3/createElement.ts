@@ -1,7 +1,7 @@
-import { Component, ElementNode } from './types';
+import { Component, ElementNode, ConstructorOf } from './types';
 import TextNode from './textNode';
 
-export default function createElement(type: any, attrs: {[attr: string]: any}, ...children: (string |  Component | ElementNode)[]): Component | ElementNode {
+export default function createElement(type: string | ConstructorOf<Component>, attrs: {[attr: string]: any}, ...children: (string |  Component | ElementNode)[]): Component | ElementNode {
     let component: Component | ElementNode;
     if (typeof type === 'string') {
         component = new ElementNode(type)

@@ -14,7 +14,7 @@ class MyButton extends Component {
     render() {
         return (<div>
             <div className="red-color">
-                {this.props.name}
+                欢迎：{this.props.name}
             </div>
             <div>num: {this.state.num + ''}</div>
             <div>b: {this.state.b}</div>
@@ -24,7 +24,7 @@ class MyButton extends Component {
     }
 }
 
-class MyCom extends Component {
+class MyComponent extends Component {
     
     state = {
         name: '何遇'
@@ -35,4 +35,4 @@ class MyCom extends Component {
     }
 }
 
-renderDom(<MyCom/>, document.getElementById('app'))
+renderDom(<MyComponent/>, document.getElementById('app'))
